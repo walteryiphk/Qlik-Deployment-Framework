@@ -25,7 +25,7 @@ vL.QDF.CreateFolder:
     store * from [vL.QDF.CreateFolder] into '$(vL.QDF.FolderName_1)\Info.txt' (txt,delimiter is ';' );
     drop table [vL.QDF.CreateFolder];
 else //QlikView is executing
-	// Skip special characters in folder name for CMD pipeline
+	// Handle special characters in folder name for CMD pipeline
 	// Ref: https://ss64.com/nt/syntax-redirection.html
 	[vL.QDF.CreateFolder.EscapeCharsMap]:
 	Mapping LOAD * Inline [
