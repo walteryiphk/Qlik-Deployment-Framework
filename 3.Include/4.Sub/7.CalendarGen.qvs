@@ -1,14 +1,13 @@
-SUB CalendarGen(vL.QDF.DateFieldLinkName,vL.QDF.CalendarTableName,vL.QDF.MonthsLeftFiscalDates,vL.QDF.CalendarGenMinDateOrg,vL.QDF.CalendarGenMaxDateOrg,vL.QDF.FindFieldTableName,vL.QDF.DateFormatOrg);
+// ___________________________________________________________________________
+  //  Calendar Generation Script
+  // v1.0, 16-Sep-2008, Author: Jonas Valleskog
+  // v2.0, 07-Dec-2012, Author: Jonas Valleskog
+  // v3.0  23-Jan-2013, Authors: Finn Nordensjö, Magnus Berg
+  // v3.1  05-Mar-2014, Author: Magnus Berg (minor fixes and added additional flags)
+  // v3.2 		 2016, Author: Magnus Berg added native Qlik Sense calendar
+  // Notes: Generic calendar generation script that enables scalable handling of creating and navigating multiple date fields
 
-/*
-	Calendar Generation Script
-	v1.0, 16-Sep-2008, Author: Jonas Valleskog
-	v2.0, 07-Dec-2012, Author: Jonas Valleskog
-	v3.0  23-Jan-2013, Authors: Finn Nordensjö, Magnus Berg
-	v3.1  05-Mar-2014, Author: Magnus Berg (minor fixes and added additional flags)
-	v3.2 		 2016, Author: Magnus Berg added native Qlik Sense calendar
-	Notes: Generic calendar generation script that enables scalable handling of creating and navigating multiple date fields
-*/
+SUB CalendarGen(vL.QDF.DateFieldLinkName,vL.QDF.CalendarTableName,vL.QDF.MonthsLeftFiscalDates,vL.QDF.CalendarGenMinDateOrg,vL.QDF.CalendarGenMaxDateOrg,vL.QDF.DateFormatOrg);
 
 for vL.QDF.IndexFields_tmp = 0 to (substringcount(',$(vL.QDF.DateFieldLinkName),',',')-2)
 
@@ -34,35 +33,6 @@ endif
 
 // Clean older dateformat
 LET vL.QDF.DateFormat_$(vL.QDF.IndexFields_tmp)=;
-
-// ## Calendar format parsing End
-
-// Autoidentify Table Name
-if '$(vL.QDF.FindFieldTableName)' = '' then
-For vL.QDF.TableNoIdentified = 0 to NoOfTables() -1
-    Let vL.QDF.TableNameIdentified = TableName($(vL.QDF.TableNoIdentified)); 
-    For vL.QDF.FieldNoIdentified = 1 to NoOfFields('$(vL.QDF.TableNameIdentified)')    
-       If vL.QDF.DateFieldLinkName_new = FieldName($(vL.QDF.FieldNoIdentified),'$(vL.QDF.TableNameIdentified)') Then
-           Set vL.QDF.FindFieldTableName = '$(vL.QDF.TableNameIdentified)';
-       END IF  
-	exit for when not '$(vL.QDF.FindFieldTableName)' = ''; 
-    Next
-exit for when not '$(vL.QDF.FindFieldTableName)' = ''; 
-Next 
-endif
-
-// Cleanup
-SET vL.QDF.TableNameIdentified = ;
-SET vL.QDF.TableNoIdentified = ;
-SET vL.QDF.FieldNoIdentified = ;
-
-// If calendar link table not found, Skip function
-if not '$(vL.QDF.FindFieldTableName)' = '' then  
-
-tmp_Calendars:
-LOAD
-	'$(vL.QDF.CalendarTableName)' AS tmp_Calendar
-AUTOGENERATE(1);
 
 // if Min and Max set manual
 if not '$(vL.QDF.CalendarGenMinDateOrg)' = '' and not '$(vL.QDF.CalendarGenMaxDateOrg)' = ''  then
@@ -170,7 +140,7 @@ Load [$(vL.QDF.DateFieldLinkName_new)],
 Resident [$(vL.QDF.CalendarTableName)];
 
 endif
-drop field tmp_Calendar;
+//drop field tmp_Calendar;
 
 if vL.QDF.IndexFields_tmp = 0 then
 	let vL.QDF.DateFieldLinkName_Derive='[$(vL.QDF.DateFieldLinkName_new)]';
@@ -182,19 +152,11 @@ else
 trace '### DF Error Did not find min and max dates, Is this a date field?, ending CalendarGen';
 endif
 
-else
-trace '### DF Error Did not find a table containing $(vL.QDF.CalendarTableName), ending CalendarGen';
-End if
-
-
-
 // Cleanup
 
 SET vL.QDF.DateFieldLinkName_new=;
 Set vL.QDF.CalendarGenMinDate = ;
 Set vL.QDF.CalendarGenMaxDate = ;
-
-Next vL.QDF.IndexFields_tmp
 
 // Add basic Qlik Sense calendar in UI  (if Sense is identifyed)
 if lower(left('$(vG.BasePath)',3))='lib' and not '$(vL.QDF.DateFieldLinkName_Derive)' = '' then 
@@ -214,6 +176,7 @@ FIELDS
 Derive Fields from Fields $(vL.QDF.DateFieldLinkName_Derive) Using [std];
 endif
 
+Next vL.QDF.IndexFields_tmp
 
 Set vL.QDF.FindFieldTableName = ;
 Set vL.QDF.DateFieldLinkName = ;
@@ -230,8 +193,3 @@ SET vL.QDF.DateFieldLinkName_Derive=;
 
 
 END SUB
-
-// **********************************
-// Function written by Jonas Valleskog enhanced by Qlik
-// **********************************
-

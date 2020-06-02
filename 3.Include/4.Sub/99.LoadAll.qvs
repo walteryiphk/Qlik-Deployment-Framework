@@ -1,8 +1,8 @@
-/* 
-### This script loads all sub functions in one single batch
-### It's run automatically by 1.Init.qvs QDF during initiation
-### $(Must_Include=$(vG.SubPath)\99.LoadAll.qvs);
-*/
+// 
+//### This script loads all sub functions in one single batch
+//### It's run automatically by 1.Init.qvs QDF during initiation
+//### $(Must_Include=$(vG.SubPath)\99.LoadAll.qvs);
+//
 $(Include=$(vG.$(vL.QDF.LinkShared_Folders)SubPath)\1.FileExist.qvs);
 $(Include=$(vG.$(vL.QDF.LinkShared_Folders)SubPath)\2.LoadVariableCSV.qvs);
 $(Include=$(vG.$(vL.QDF.LinkShared_Folders)SubPath)\3.LoadContainerMap.qvs);
@@ -17,6 +17,7 @@ $(Include=$(vG.$(vL.QDF.LinkShared_Folders)SubPath)\11.DynamicContainerLoader.qv
 $(Include=$(vG.$(vL.QDF.LinkShared_Folders)SubPath)\12.Index.qvs);
 $(Include=$(vG.$(vL.QDF.LinkShared_Folders)SubPath)\13.NiceTrace.qvs);
 $(Include=$(vG.$(vL.QDF.LinkShared_Folders)SubPath)\14.QVDReduce.qvs);
+$(Include=$(vG.$(vL.QDF.LinkShared_Folders)SubPath)\15.ETLLog.qvs);
 
 
 // Loading in Qlikview Components, source avalible on GitHub
@@ -25,16 +26,15 @@ $(Include=$(vG.$(vL.QDF.LinkShared_Folders)SubPath)\14.QVDReduce.qvs);
 // Disable Qvc in the script (before QDF initiation) setting the vG.QVCDisable=true flag 
 
 
-/* Section below is when integrating QVC and is disabled default. Enable QVC in Deploy Tool to activate this section
-if trim(lower('$(vG.QVCDisable)'))='true' then // This is used to disable/enable QlikView Components library (Qvc)
-
-	 set vG.QVCDisable='$(vG.$(vL.QDF.LinkShared_Folders)SubPath)'; // vG.QVCDisable = true removes Qvc.qvs filename
-else
-	set vG.QVCDisable='$(vG.$(vL.QDF.LinkShared_Folders)SubPath)Qvc.qvs'; // Not disabled will state the Qvc.qvs filename	
-endif
-
-$(Include=$(vG.QVCDisable)); 
-*/
+// Section below is when integrating QVC and is disabled default. Enable QVC in Deploy Tool to activate this section
+//if trim(lower('$(vG.QVCDisable)'))='true' then // This is used to disable/enable QlikView Components library (Qvc)
+//
+//	 set vG.QVCDisable='$(vG.$(vL.QDF.LinkShared_Folders)SubPath)'; // vG.QVCDisable = true removes Qvc.qvs filename
+//else
+//	set vG.QVCDisable='$(vG.$(vL.QDF.LinkShared_Folders)SubPath)Qvc.qvs'; // Not disabled will state the Qvc.qvs filename	
+//endif
+//
+//$(Include=$(vG.QVCDisable)); 
 
 // *************************************
 // Functions written by Magnus Berg Qlik
